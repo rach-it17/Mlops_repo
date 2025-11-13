@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import mlflow, mlflow.sklearn
 import pickle, os
+from mlflow.models.signature import infer_signature
 
 # Set MLflow experiment
 mlflow.set_experiment("GRC_Risk_Model")
@@ -31,12 +32,21 @@ with mlflow.start_run():
     acc = accuracy_score(y, y_pred)
     mlflow.log_metric("train_accuracy", acc)
 
-    # Log model to MLflow
-    mlflow.sklearn.log_model(model, name="model")
+    # Create an input example and infer signature
+    input_example = X.iloc[:1]
+    signature = infer_signature(X, model.predict(X))
 
-    # Save local copy for DVC
+    # Log model with signature and input example
+    mlflow.sklearn.log_model(
+        sk_model=model,
+        name="risk_model",
+        input_example=input_example,
+        signature=signature
+    )
+
+    # Save local copy for DVC or CI artifact
     os.makedirs(MODEL_DIR, exist_ok=True)
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
-print(f"Model trained and saved to {MODEL_PATH}")
+print(f" Model trained and saved to {MODEL_PATH}")
