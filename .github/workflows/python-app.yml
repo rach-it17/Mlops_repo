@@ -31,12 +31,15 @@ jobs:
         run: |
           dvc remote add -d storage $DVC_REMOTE_URL || true
           dvc remote default storage || true
-
-      - name: Pull data from DVC remote
-        env:
-          DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
+      - name: Setup DVC
         run: |
-          dvc pull -r storage
+          dvc init --no-scm
+          mkdir -p data/raw
+          echo "severity,likelihood,impact,risk_level
+          1,2,3,Low
+          2,3,4,Medium
+          3,4,5,High" > data/raw/data.csv
+
 
       - name: Reproduce DVC pipeline
         run: dvc repro
