@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true  # required if using Git LFS
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,6 +24,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install numpy pandas scikit-learn mlflow dvc fastapi uvicorn
           pip install dvc[all] mlflow scikit-learn pandas
+
+      - name: Configure DVC remote
+        env:
+          DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
+        run: |
+          dvc remote add -d storage $DVC_REMOTE_URL || true
+          dvc remote default storage || true
+
+      - name: Pull data from DVC remote
+        env:
+          DVC_REMOTE_URL: ${{ secrets.DVC_REMOTE_URL }}
+        run: |
+          dvc pull -r storage
 
       - name: Reproduce DVC pipeline
         run: dvc repro
