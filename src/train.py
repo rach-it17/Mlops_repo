@@ -32,7 +32,7 @@ with mlflow.start_run():
     mlflow.log_metric("train_accuracy", acc)
 
     # Log model to MLflow
-    mlflow.sklearn.log_model(model, artifact_path="model")
+    mlflow.sklearn.log_model(model, name="model")
 
     # Save local copy for DVC
     os.makedirs(MODEL_DIR, exist_ok=True)
