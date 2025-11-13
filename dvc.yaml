@@ -3,10 +3,9 @@ stages:
     cmd: python src/data_prep.py
     deps:
       - src/data_prep.py
-      - data/raw/incidents.csv
+      - data/raw/data.csv
     outs:
       - data/processed/train.csv
-      - data/processed/test.csv
 
   train:
     cmd: python src/train.py
@@ -21,6 +20,5 @@ stages:
     deps:
       - src/monitor.py
       - models/risk_model.pkl
-      - data/new_data/production_incidents.csv
     outs:
       - metrics/monitoring_report.csv
