@@ -9,10 +9,14 @@ from mlflow.models.signature import infer_signature
 # Set MLflow experiment
 mlflow.set_experiment("GRC_Risk_Model")
 
-# Ensure relative paths (works on Linux, Windows, CI)
-DATA_PATH = os.path.join("data", "processed", "train.csv")
-MODEL_DIR = os.path.join("models")
+# Force working directory to the repo root
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
+DATA_PATH = os.path.join(ROOT_DIR, "data", "processed", "train.csv")
+MODEL_DIR = os.path.join(ROOT_DIR, "models")
 MODEL_PATH = os.path.join(MODEL_DIR, "risk_model.pkl")
+
 
 # Load data
 train = pd.read_csv(DATA_PATH)
